@@ -1,0 +1,123 @@
+public class ResultFactory {
+	public ICalculation getResult(List<String> args) {
+		
+		// this variable will hold description of the parameter
+		// to be calculated, composed of string values selected
+		// while specifying the desired calculation
+		// For example, if "Vn" is selected, and "Sod" is known value,
+		// and type of collision is "FullFrontImpact",
+		// the description parameter will have value "VnSodFullFrontImpact"
+		StringBuilder paramDesc = new StringBuilder();
+
+		// this list will hold numeric values for calculation
+		List<Double> calcValues = new ArrayList<>();
+
+		for (int i = 0; i < 3; i++) {
+			try {
+				// if no "NumberFormatException" is thrown
+				// it means that that is a numeric value
+				// and it should be stored in "calcValues" list
+				Double value = Double.parseDouble(args.get(i));
+				calcValues.add(value);
+			} catch (NumberFormatException nfe) {
+				// if "NumberFormatException" is thrown
+				// it means that that is a string value
+				// and it should be used for composing of 
+				// the description
+				paramDesc.append(args.get(i));
+			}
+		}
+
+		switch (paramDesc.toString()) {
+			case "VnSodFullFrontImpact":
+				return new Result(
+					new FullFrontImpactSod(calcValues));
+			case "VnSodPartialFrontImpact":
+				return new Result(
+					new PartialFrontImpactSod(calcValues));
+			case "VnSsz":
+				return new Result(
+					new FrontImpactSsz(calcValues));
+		}
+	}
+} 
+
+public Inteface ICalculation {
+	Double calculate();
+}
+
+public class Result implements ICalculation {
+
+	private IVn ivn;
+
+	public Result(IVn ivn) {
+		this.ivn = ivn;
+	}
+
+	public Double calculate() {
+		ivn.calculateVn();
+	}
+}
+
+public interface IVn {
+	Double calculateVn();
+}
+
+abstract class FrontImpactSod implements IVn {
+	private Double Sod;
+	private Double ma;
+	private Double mp;
+
+	public FrontImpactSod(List<Double> calcValues) {
+		this.Sod = calcValues.get(0);
+		this.ma = calcValues.get(1);
+		this.mp = calcValues.get(2);
+	}
+	
+	protected abstract Double calculate();
+
+	*getters and setters*
+}
+
+public class FullFrontImpactSod extends FrontImpact {
+	
+	private Double calculate() {
+		double result = **dummy calculation** (getSod() + getMa() + getMp());
+		return result;
+	}
+
+	@Override
+	public Double calculateVn() {
+		return calculate();
+	}
+}
+
+public class PartialFrontImpactSod extends FrontImpact {
+	
+	private Double calculate() {
+		double result = **dummy calculation** (getSod() - getMa() - getMp());
+		return result;
+	}
+
+	@Override
+	public Double calculateVn() {
+		return calculate();
+	}
+}
+
+public class FrontImpactSsz implements IVn {
+	private Double Ssz;
+	private Double b;
+
+	public FrontImpact(List<Double> calcValues) {
+		this.Ssz = calcValues.get(0);
+		this.b = calcValues.get(1);
+	}
+	
+	@Override	
+	public Double calculateVn() {
+		double result = **dummy calculation** (this.Ssz * this.b);
+		return result;
+	}
+}
+
