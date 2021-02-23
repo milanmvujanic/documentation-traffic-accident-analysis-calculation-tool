@@ -47,7 +47,7 @@ public class ResultFactory {
 } 
 
 public Inteface ICalculation {
-	Double calculate();
+	Map<String,Double> calculate();
 }
 
 public class Result implements ICalculation {
@@ -58,13 +58,13 @@ public class Result implements ICalculation {
 		this.ivn = ivn;
 	}
 
-	public Double calculate() {
+	public Map<String,Double> calculate() {
 		ivn.calculateVn();
 	}
 }
 
 public interface IVn {
-	Double calculateVn();
+	Map<String,Double> calculateVn();
 }
 
 abstract class VnSodFrontImpact implements IVn {
@@ -78,7 +78,7 @@ abstract class VnSodFrontImpact implements IVn {
 		this.mp = calcValues.get(2);
 	}
 	
-	protected abstract Double calculateVnSodFrontImpact();
+	protected abstract Map<String,Double> calculateVnSodFrontImpact();
 
 	*getters and setters*
 }
@@ -90,13 +90,16 @@ public class VnSodFullFrontImpact extends VnSodFrontImpact {
 	}
 	
 	@Override
-	protected Double calculateVnSodFrontImpact() {
+	protected Map<String,Double> calculateVnSodFrontImpact() {
 		double result = **dummy calculation** (getSod() + getMa() + getMp());
-		return result;
+		Map<String,Double> results = new HashMap<>();
+		results.put("min", result * 0.9);
+		results.put("max", result * 1,1);
+		return results;
 	}
 
 	@Override
-	public Double calculateVn() {
+	public Map<String,Double> calculateVn() {
 		return calculateVnSodFrontImpact();
 	}
 }
@@ -108,13 +111,16 @@ public class VnSodPartialFrontImpact extends VnSodFrontImpact {
 	}
 	
 	@Override
-	private Double calculateVnSodFrontImpact() {
+	private Map<String,Double> calculateVnSodFrontImpact() {
 		double result = **dummy calculation** (getSod() - getMa() - getMp());
-		return result;
+		Map<String,Double> results = new HashMap<>();
+		results.put("min", result * 0.8);
+		results.put("max", result * 1,2);
+		return results;
 	}
 
 	@Override
-	public Double calculateVn() {
+	public Map<String,Double> calculateVn() {
 		return calculateVnSodFrontImpact();
 	}
 }
@@ -129,9 +135,11 @@ public class VodSszFrontImpact implements IVn {
 	}
 	
 	@Override	
-	public Double calculateVn() {
+	public Map<String,Double> calculateVn() {
 		double result = **dummy calculation** (this.Ssz * this.b);
-		return result;
+		Map<String,Double> results = new HashMap<>();
+		results.put("result", result);
+		return results;
 	}
 }
 
