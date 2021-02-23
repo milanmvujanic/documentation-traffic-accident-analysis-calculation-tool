@@ -10,8 +10,24 @@ public class ResultFactory {
 		StringBuilder paramDesc = new StringBuilder();
 
 		// this list will hold numeric values for calculation
-		List<Double> calcValues = new ArrayList<>();
+		List<Double> calcValues = new ArrayList<>();	
 
+		setParamDescAndCalcValues(paramDesc, calcValues);	
+
+		switch (paramDesc.toString()) {
+			case "VnSodFullFrontImpact":
+				return new Result(
+					new VnSodFullFrontImpact(calcValues));
+			case "VnSodPartialFrontImpact":
+				return new Result(
+					new VnSodPartialFrontImpact(calcValues));
+			case "VnSsz":
+				return new Result(
+					new VnSszFrontImpact(calcValues));
+		}
+	}
+
+	private void setParamDescAndCalcValues(StringBuilder paramDesc, List<Double> calcValues) {
 		for (int i = 0; i < 3; i++) {
 			try {
 				// if no "NumberFormatException" is thrown
@@ -26,18 +42,6 @@ public class ResultFactory {
 				// the description
 				paramDesc.append(args.get(i));
 			}
-		}
-
-		switch (paramDesc.toString()) {
-			case "VnSodFullFrontImpact":
-				return new Result(
-					new FullFrontImpactSod(calcValues));
-			case "VnSodPartialFrontImpact":
-				return new Result(
-					new PartialFrontImpactSod(calcValues));
-			case "VnSsz":
-				return new Result(
-					new FrontImpactSsz(calcValues));
 		}
 	}
 } 
@@ -63,53 +67,63 @@ public interface IVn {
 	Double calculateVn();
 }
 
-abstract class FrontImpactSod implements IVn {
+abstract class VnSodFrontImpact implements IVn {
 	private Double Sod;
 	private Double ma;
 	private Double mp;
 
-	public FrontImpactSod(List<Double> calcValues) {
+	public VnSodFrontImpact(List<Double> calcValues) {
 		this.Sod = calcValues.get(0);
 		this.ma = calcValues.get(1);
 		this.mp = calcValues.get(2);
 	}
 	
-	protected abstract Double calculate();
+	protected abstract Double calculateVnSodFrontImpact();
 
 	*getters and setters*
 }
 
-public class FullFrontImpactSod extends FrontImpact {
+public class VnSodFullFrontImpact extends VnSodFrontImpact {
+
+	public VnSodFullFrontImpact(List<Double> calcValues) {
+		super(calcValues);
+	}
 	
-	private Double calculate() {
+	@Override
+	protected Double calculateVnSodFrontImpact() {
 		double result = **dummy calculation** (getSod() + getMa() + getMp());
 		return result;
 	}
 
 	@Override
 	public Double calculateVn() {
-		return calculate();
+		return calculateVnSodFrontImpact();
 	}
 }
 
-public class PartialFrontImpactSod extends FrontImpact {
+public class VnSodPartialFrontImpact extends VnSodFrontImpact {
+
+	public VnSodPartialFrontImpact(List<Double> calcValues) {
+		super(calcValues);
+	}
 	
-	private Double calculate() {
+	@Override
+	private Double calculateVnSodFrontImpact() {
 		double result = **dummy calculation** (getSod() - getMa() - getMp());
 		return result;
 	}
 
 	@Override
 	public Double calculateVn() {
-		return calculate();
+		return calculateVnSodFrontImpact();
 	}
 }
 
-public class FrontImpactSsz implements IVn {
+public class VodSszFrontImpact implements IVn {
 	private Double Ssz;
 	private Double b;
 
-	public FrontImpact(List<Double> calcValues) {
+	public VodSszFrontImpact(List<Double> calcValues) {
 		this.Ssz = calcValues.get(0);
 		this.b = calcValues.get(1);
 	}
@@ -120,4 +134,33 @@ public class FrontImpactSsz implements IVn {
 		return result;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
